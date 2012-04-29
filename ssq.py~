@@ -1,0 +1,162 @@
+# encoding = 'utf-8'
+
+import sys,cmd,sqlite3,HTMLParser
+import urllib
+import re
+
+
+class SsqDb:
+    def __init__(self,dbfile):
+        self.dbfile = dbfile
+    def crateTableSsq(self):
+        try:
+            conn = sqlite3.connect(self.dbfile)
+            try:
+                c= conn.cursor()
+                c.execute('''create table ssq(id integer primary key,open date,r1 integer,r2 integer,r3 integer,r4 integer,r5 integer,r6 integer,b integer,money integer,first integer,second integer)''')
+                conn.commit()
+            finally:
+                conn.close()
+        except:
+            pass
+
+    def insertToSsq(self,data):
+        conn = sqlite3.connect(self.dbfile)
+        try:
+            c = conn.cursor()
+            dataStr = ','.join(data)
+            print dataStr
+            c.execute('''insert into ssq values (''' + dataStr + ''')''')
+            conn.commit()
+        finally:
+            conn.close()
+
+    def fetchAll(self):
+        conn = sqlite3.connect(self.dbfile)
+        c = conn.cursor()
+        rec = c.execute('''select * from ssq order by id''')
+        return c.fetchall()
+        conn.close()
+    
+    def fetchAllRedBall(self):
+        conn = sqlite3.connect(self.dbfile)
+        c = conn.cursor()
+        rec = c.execute('''select r1,r2,r3,r4,r5,r6 from ssq order by id''')
+        return  c.fetchall()
+        conn.close()
+
+    def fetchAllBlueBall(self):
+        conn = sqlite3.connect(self.dbfile)
+        c = conn.cursor()
+        rec = c.execute('''select b from ssq order by id''')
+        return c.fetchall()
+        conn.close()
+      
+    def printSsq(self):
+        conn = sqlite3.connect(self.dbfile)
+        c = conn.cursor()
+        rec = c.execute('''select * from ssq order by id''')
+        print c.fetchall()
+        conn.close()
+
+class BallAnalytics:
+    def __init__(self):
+        pass
+    def blueDistance(self,data):
+        b = [100]*16
+        for i in range(1,17):
+            for x in range(1,len(data)):
+                if data[-x][0] == i:
+                    b[i-1] = x-1
+                    break
+        return b
+    def redDistance(self,data):
+        r = [100]*33
+        for i in range(1,34):
+            for x in range(1,len(data)):
+                if i in data[-x]:
+                    r[i-1] = x-1
+                    break
+        return r
+   
+    def order(self,data):
+        t = [0]*len(data)
+        for i in range(0,len(data)):
+            t[i] = (i+1, data[i])
+        t = sorted(t, key=lambda x:x[1], reverse = True)
+        return t
+
+        
+
+
+
+
+
+#http://kaijiang.zhcw.com/zhcw/html/ssq/list.html
+p = re.compile('[0-9]+')
+
+class HistoryFetcher(HTMLParser.HTMLParser):
+    selected = ('table','tr','td','em','strong','p')
+    def __init__(self):
+        HTMLParser.HTMLParser.__init__(self)
+    def reset(self):
+        HTMLParser.HTMLParser.reset(self)
+        self._level_stack=[]
+        self.item = []
+        self.items = []
+
+    def handle_starttag(self,tag,attrs):
+        if tag in HistoryFetcher.selected:
+            self._level_stack.append(tag)
+
+    def handle_endtag(self,tag):
+        if self._level_stack and tag in HistoryFetcher.selected and tag == self._level_stack[-1]:
+            self._level_stack.pop()
+
+    def handle_data(self,data):
+        if "/".join(self._level_stack) >= 'table/tr/td' and p.match(data) and not 'p' in self._level_stack:
+            if len(self.item) < 12:
+                self.item.append(data)
+            if len(self.item) == 12:
+         #       print self.item
+                self.items.append(self.item)
+                self.item = []
+
+
+def handle_items(items):
+    for item in items:
+        temp = "'" + item[0] +"'"
+        item[0] = item[1]
+        item[1] = temp
+        item[9] = ''.join(item[9].split(','))
+    return items
+
+if __name__ == '__main__':
+    par = HistoryFetcher()
+    urlStr =  'http://kaijiang.zhcw.com/zhcw/html/ssq/list_'
+
+    #i = 1
+    #while i <= 66:
+    #    content = urllib.urlopen(urlStr + str(i) + '.html').read()
+    #    par.feed(content)
+    #    i += 1
+
+    #print len(par.items)
+
+    db = SsqDb('ssqdb')
+    ba = BallAnalytics()
+
+    #db.crateTableSsq()
+    #i = len(par.items)
+    #items = handle_items(par.items)
+    #while i > 0:
+    #    i -= 1
+    #    db.insertToSsq(items[i])
+    #    print items[i]
+    #db.printSsq()
+    #print db.fetchAll()
+    #print db.fetchAllRedBall()
+    print ba.redDistance(db.fetchAllRedBall())
+    print ba.blueDistance(db.fetchAllBlueBall())
+    print ba.order(ba.blueDistance(db.fetchAllBlueBall()))
+    print ba.order(ba.redDistance(db.fetchAllRedBall()))

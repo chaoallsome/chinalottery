@@ -1,0 +1,38 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+BallAnalytics	.\ssq.py	/^class BallAnalytics:$/;"	c
+HTMLParser	.\ssq.py	/^import sys,cmd,sqlite3,HTMLParser$/;"	i
+HistoryFetcher	.\ssq.py	/^class HistoryFetcher(HTMLParser.HTMLParser):$/;"	c
+Order	.\ssq.py	/^    def Order(self,data):$/;"	m	class:BallAnalytics
+SsqDb	.\ssq.py	/^class SsqDb:$/;"	c
+__init__	.\ssq.py	/^    def __init__(self):$/;"	m	class:BallAnalytics
+__init__	.\ssq.py	/^    def __init__(self):$/;"	m	class:HistoryFetcher
+__init__	.\ssq.py	/^    def __init__(self,dbfile):$/;"	m	class:SsqDb
+ba	.\ssq.py	/^    ba = BallAnalytics()$/;"	v
+blueDistance	.\ssq.py	/^    def blueDistance(self,data):$/;"	m	class:BallAnalytics
+cmd	.\ssq.py	/^import sys,cmd,sqlite3,HTMLParser$/;"	i
+crateTableSsq	.\ssq.py	/^    def crateTableSsq(self):$/;"	m	class:SsqDb
+db	.\ssq.py	/^    db = SsqDb('ssqdb')$/;"	v
+fetchAll	.\ssq.py	/^    def fetchAll(self):$/;"	m	class:SsqDb
+fetchAllBlueBall	.\ssq.py	/^    def fetchAllBlueBall(self):$/;"	m	class:SsqDb
+fetchAllRedBall	.\ssq.py	/^    def fetchAllRedBall(self):$/;"	m	class:SsqDb
+handle_data	.\ssq.py	/^    def handle_data(self,data):$/;"	m	class:HistoryFetcher
+handle_endtag	.\ssq.py	/^    def handle_endtag(self,tag):$/;"	m	class:HistoryFetcher
+handle_items	.\ssq.py	/^def handle_items(items):$/;"	f
+handle_starttag	.\ssq.py	/^    def handle_starttag(self,tag,attrs):$/;"	m	class:HistoryFetcher
+insertToSsq	.\ssq.py	/^    def insertToSsq(self,data):$/;"	m	class:SsqDb
+p	.\ssq.py	/^p = re.compile('[0-9]+')$/;"	v
+par	.\ssq.py	/^    par = HistoryFetcher()$/;"	v
+printSsq	.\ssq.py	/^    def printSsq(self):$/;"	m	class:SsqDb
+re	.\ssq.py	/^import re$/;"	i
+redDistance	.\ssq.py	/^    def redDistance(self,data):$/;"	m	class:BallAnalytics
+reset	.\ssq.py	/^    def reset(self):$/;"	m	class:HistoryFetcher
+selected	.\ssq.py	/^    selected = ('table','tr','td','em','strong','p')$/;"	v	class:HistoryFetcher
+sqlite3	.\ssq.py	/^import sys,cmd,sqlite3,HTMLParser$/;"	i
+sys	.\ssq.py	/^import sys,cmd,sqlite3,HTMLParser$/;"	i
+urlStr	.\ssq.py	/^    urlStr =  'http:\/\/kaijiang.zhcw.com\/zhcw\/html\/ssq\/list_'$/;"	v
+urllib	.\ssq.py	/^import urllib$/;"	i
