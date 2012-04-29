@@ -397,7 +397,7 @@ class BallAnalytics:
 if __name__ == '__main__':
     db = SsqDb('ssqdb')
     ba = BallAnalytics()
-    print (u"双色球分析模块测试")
+    print (u'''双色球分析模块测试''')
     #print (u'''蓝球最近未出现数''')
     print(u'''最新一期红球数据''')
     print(db.fetchLatestRedBall())

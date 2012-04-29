@@ -243,8 +243,8 @@ class CheckMax:
                                     weight[3] = self.svWeight
                                     weight[4] = self.onWeight
                                     weight[5] = self.lnWeight
-                                    print (u'''当前最佳权值：''' + str(weight))
-                                    print (u'''当前最佳成绩：''' + str(res))
+                                    print (u'''当前最佳权值:''' + str(weight))
+                                    print (u'''当前最佳成绩:''' + str(res))
                                 
         print(u'''-------------------------------------------------------------------''')
         print(u'''最佳权值：''' + str(weight))
