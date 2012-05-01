@@ -17,23 +17,24 @@ __docformat__ = 'restructuredtext'
 __all__ = []
 
 import sys
-import getopt
+import logging
+import logging.config
 
 USAGE = """
 .py usage...
 """
 
 def main(argv):
-    try:
-        opts, args = getopt.gnu_getopt(argv[1:], "h", ["help"])
-
-        for o, a in opts:
-            if o in ("-h", "--help"):
-                print USAGE
-
-    except getopt.GetoptError:
-        print >> sys.stderr, USAGE
-        return 2
+	pass
 
 if __name__ == '__main__':
-    sys.exit(main(sys.argv))
+    logging.config.fileConfig("logging.conf")
+    #create logger
+    logger = logging.getLogger("simpleExample")
+     
+    #"application" code
+    logger.debug("debug message")
+    logger.info("info message")
+    logger.warn("warn message")
+    logger.error("error message")
+    logger.critical("critical message")

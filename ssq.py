@@ -41,7 +41,7 @@ from db import SsqDb
 
 u'''该类检查是否中奖以及奖金数额'''
 class CheckMax:
-    def __init__(self,ssqDb,ballAnalytics):
+    def __init__(self,ssqDb,ballAnalytics,weight):
         ssqDb.updateDb()
         self.db = ssqDb
         self.data = ssqDb.fetchAll()
@@ -49,24 +49,14 @@ class CheckMax:
         self.blueBalls = ssqDb.fetchAllBlueBall()
         self.ba = ballAnalytics
 
-        self.redWeightA = 1 #红球最近未出现的期数
-        self.redWeightB = 1 #红球出现的总次数
-        self.redWeightC = 1 #最近33期中红球出现的总次数
-        self.redWeightD = 1
-        self.redWeightE = 1
+        self.weight = weight
 
-        self.blueWeightA = 1 #蓝球最近未出现的期数
-        self.blueWeightB = 1 #红球出现的总期数
-        self.blueWeightC = 1 #最近16期中红球出现的次数
-        self.blueWeightD = 1
-        self.blueWeightE = 1
-
-        self.oeWeight = 0   #奇数偶数偏差追踪
-        self.tzWeight = 0   #三分区偏差最总
-        self.bsWeight = 0   #大数小数偏差追踪
-        self.svWeight = 0   #和值偏差追踪
-        self.onWeight = 0   #遗漏数字偏差追踪
-        self.lnWeight = 0   #尾数偏差追踪
+        #self.oeWeight = 0   #奇数偶数偏差追踪
+        #self.tzWeight = 0   #三分区偏差最总
+        #self.bsWeight = 0   #大数小数偏差追踪
+        #self.svWeight = 0   #和值偏差追踪
+        #self.onWeight = 0   #遗漏数字偏差追踪
+        #self.lnWeight = 0   #尾数偏差追踪
 
         #self.redWeight = [0]*33
 
@@ -110,6 +100,12 @@ class CheckMax:
 
         return redball
 
+    u'''计算只算红球的情况下，中了多少钱'''
+    def checkRedMoney(self,number):
+        award = (0,0,0,5,10,200,500000)
+        return award[number]
+
+
     u'''检查所给蓝球号码是否为中奖号码'''
     def checkBlue(self,target,data):
         blueball = 0
@@ -129,12 +125,12 @@ class CheckMax:
         #red = map(lambda x,y,z:x+y+z,[self.redWeightA*x for x in a],[self.redWeightB*x for x in b],[self.redWeightC*x for x in c])
         #print red
         red = [0]*33
-        red = self.addWeight(self.ba.oddAndEvenWeight(data[:5]),self.oeWeight,red)
-        red = self.addWeight(self.ba.threeZonesWeight(data[:5]),self.tzWeight,red)
-        red = self.addWeight(self.ba.bigAndSmallWeight(data[:5]),self.bsWeight,red)
-        red = self.addWeight(self.ba.sumValueWeight(data[:5]),self.svWeight,red)
-        red = self.addWeight(self.ba.omittedNumberWeight(data,5),self.onWeight,red)
-        red = self.addWeight(self.ba.lastNumberWeight(data[:5]),self.lnWeight,red)
+        red = self.addWeight(self.ba.oddAndEvenWeight(data[:5]),self.weight[0],red)
+        red = self.addWeight(self.ba.threeZonesWeight(data[:5]),self.weight[1],red)
+        red = self.addWeight(self.ba.bigAndSmallWeight(data[:5]),self.weight[2],red)
+        red = self.addWeight(self.ba.sumValueWeight(data[:5]),self.weight[3],red)
+        red = self.addWeight(self.ba.omittedNumberWeight(data,5),self.weight[4],red)
+        red = self.addWeight(self.ba.lastNumberWeight(data[:5]),self.weight[5],red)
 
         return red
 
@@ -180,6 +176,7 @@ class CheckMax:
         for x in range(0,len(tmp)):
             if flag[x]:
                 res = tmp[x]
+        print(res)
         return res
 
 
@@ -196,13 +193,14 @@ class CheckMax:
         pass
 
     def getgetget(self):
-        res = [0]*9
+        res = [0]*10
         tLen = len(self.redBalls)-33
         for x in range(tLen,0,-1):
             #print (u'''期号：''' + str(self.data[x][0]))
             award = self.checkRed(self.redBalls[x],self.bestRed(self.redWeight(self.redBalls[x+1:])))
             res[award] += 1
             res[8] += award
+            res[9] += self.checkRedMoney(award)
             if award > 2:
                 res[7] += 1
 
@@ -219,35 +217,31 @@ class CheckMax:
         return res
     
     def bestWeight(self):
-        weight = [0]*6
-        maxAward = [0]*9
-        for a in range(0,10):
-            self.oeWeight = a
-            for b in range(0,1):
-                self.tzWeight = b
-                for c in range(0,10):
-                    self.bsWeight = c
-                    for d in range(0,10):
-                        self.svWeight = d
-                        for e in range(0,10):
-                            self.onWeight = e
-                            for f in range(0,10):
-                                self.lnWeightC = f
+        tempWeight = [0]*6
+        maxAward = [0]*10
+        for a in range(0,2):
+            self.weight[0] = a
+            for b in range(0,2):
+                self.weight[1] = b
+                for c in range(0,2):
+                    self.weight[2] = c
+                    for d in range(0,2):
+                        self.weight[3] = d
+                        for e in range(0,2):
+                            self.weight[4] = e
+                            for f in range(0,2):
+                                self.weight[5] = f
                                 res = self.getgetget()
-                                #print (u'''当前权值：''' + str(f))
-                                if res[7] >  maxAward[7]:
+                                print(self.weight)
+                                print(res)
+                                if res[9] >  maxAward[9]:
                                     maxAward = [x for x in res]
-                                    weight[0] = self.oeWeight
-                                    weight[1] = self.tzWeight
-                                    weight[2] = self.bsWeight
-                                    weight[3] = self.svWeight
-                                    weight[4] = self.onWeight
-                                    weight[5] = self.lnWeight
-                                    print (u'''当前最佳权值:''' + str(weight))
+                                    tempWeight = [x for x in self.weight]
+                                    print (u'''当前最佳权值:''' + str(tempWeight))
                                     print (u'''当前最佳成绩:''' + str(res))
                                 
         print(u'''-------------------------------------------------------------------''')
-        print(u'''最佳权值：''' + str(weight))
+        print(u'''最佳权值：''' + str(tempWeight))
         print(u'''最佳成绩：''' + str(maxAward))
 
         print(u'''-------------------------------------------------------------------''')
@@ -284,7 +278,7 @@ if __name__ == '__main__':
 
     #db = SsqDb('ssqdb')
     #ba = BallAnalytics()
-    cm = CheckMax(SsqDb('ssqdb'),BallAnalytics())
+    cm = CheckMax(SsqDb('ssqdb'),BallAnalytics(),[0,0,0,0,0,0])
     #cm.getgetget()
     #print cm.redWeight(cm.redBalls)
     cm.bestWeight()
